@@ -1,22 +1,21 @@
-# ETAPA 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copiar el proyecto usando la ruta del monorepositorio
+COPY ["backend-api.csproj", "./"]
+RUN dotnet restore "./backend-api.csproj"
+
+# Copiar todo el código y publicar
+COPY . .
+RUN dotnet publish "backend-api.csproj" -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
+COPY --from=build /app/publish .
 
-# Al estar dentro de /backend-api, solo copiamos el csproj que está ahí
-COPY *.csproj ./
-RUN dotnet restore
-
-# Copiamos el resto del código del backend
-COPY . ./
-RUN dotnet publish -c Release -o out
-
-# ETAPA 2: Runtime
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-COPY --from=build /app/out .
-
-# Render usa el puerto 10000 por defecto
+# Puerto para Render
 ENV ASPNETCORE_URLS=http://+:10000
 EXPOSE 10000
 
-ENTRYPOINT ["dotnet", "prueba.dll"]
+# IMPORTANTE: Asegúrate de que el nombre sea exacto al de tu .csproj
+ENTRYPOINT ["dotnet", "backend-api.dll"]
