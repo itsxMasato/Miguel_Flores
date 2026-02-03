@@ -1,14 +1,17 @@
-# Build stage
+# -------- BUILD --------
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY *.csproj ./
+# limpiar cualquier sdk previo
+RUN dotnet --info
+
+COPY backend-api.csproj ./
 RUN dotnet restore
 
 COPY . ./
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish backend-api.csproj -c Release -o /app/publish
 
-# Runtime stage
+# -------- RUNTIME --------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
