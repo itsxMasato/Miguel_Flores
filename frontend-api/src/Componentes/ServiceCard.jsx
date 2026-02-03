@@ -1,0 +1,14 @@
+import "./ServiceCard.css";
+
+function ServiceCard({ servicio, onEdit }) {
+  return (
+    <div className="service-card">
+      <h3>💼 {servicio.nombre}</h3>
+      <p>{servicio.descripcion}</p>
+
+      <button onClick={() => onEdit && onEdit(servicio)}>Editar</button>
+    </div>
+  );
+}
+
+export default ServiceCard;
