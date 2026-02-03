@@ -1,38 +1,40 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configuración de Servicios
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        policy => policy
-            .AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod());
+    options.AddPolicy("AllowAll", policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
 var app = builder.Build();
-
-// 2. Configuración del Middleware
 app.UseCors("AllowAll");
 
-// 3. LA RUTA CON DATOS (Esto es lo que te faltaba para que no salga [])
-var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-
-app.MapGet("/weatherforecast", () =>
+// Base de datos temporal en memoria
+var servicios = new List<dynamic>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new {
-            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        })
-        .ToArray();
-    return forecast;
+    new { id = 1, nombre = "Soporte Técnico", descripcion = "Mantenimiento de PC", icono = "💻" },
+    new { id = 2, nombre = "Redes", descripcion = "Instalación de WiFi", icono = "📡" }
+};
+
+// GET: Obtener servicios (Lo que usa getServicios())
+app.MapGet("/servicios", () => servicios);
+
+// POST: Crear servicio (Lo que usa crearServicio())
+app.MapPost("/servicios", (dynamic nuevo) => {
+    var id = servicios.Count + 1;
+    var servicioFinal = new { id = id, nombre = (string)nuevo.nombre, descripcion = (string)nuevo.descripcion, icono = "✨" };
+    servicios.Add(servicioFinal);
+    return Results.Created($"/servicios/{id}", servicioFinal);
 });
 
-app.MapControllers(); 
+// PUT: Actualizar servicio (Lo que usa actualizarServicio())
+app.MapPut("/servicios/{id}", (int id, dynamic editado) => {
+    var index = servicios.FindIndex(s => s.id == id);
+    if (index == -1) return Results.NotFound();
+    servicios[index] = new { id = id, nombre = (string)editado.nombre, descripcion = (string)editado.descripcion, icono = "📝" };
+    return Results.Ok(servicios[index]);
+});
 
+app.MapControllers();
 app.Run();
