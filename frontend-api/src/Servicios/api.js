@@ -1,27 +1,37 @@
-const API_URL = "https://miguel-flores.onrender.com/servicios";
+const BASE_URL = "http://localhost:5090/api/servicios";
 
-export const getServicios = async () => {
-  const res = await fetch(API_URL);
-  if (!res.ok) throw new Error("Error al obtener datos");
+export async function getServicios() {
+  const res = await fetch(BASE_URL);
+  if (!res.ok) throw new Error("Error al cargar servicios");
   return res.json();
-};
+}
 
-export const crearServicio = async (payload) => {
-  const res = await fetch(API_URL, {
+export async function crearServicio(payload) {
+  const res = await fetch(BASE_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error("Error al crear");
-  return res.json();
-};
 
-export const actualizarServicio = async (id, payload) => {
-  const res = await fetch(`${API_URL}/${id}`, {
+  if (!res.ok) {
+    const msg = await res.text();
+    throw new Error(msg || "Error creando servicio");
+  }
+
+  return res.json();
+}
+
+export async function actualizarServicio(id, payload) {
+  const res = await fetch(`${BASE_URL}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error("Error al actualizar");
+
+  if (!res.ok) {
+    const msg = await res.text();
+    throw new Error(msg || "Error actualizando servicio");
+  }
+
   return res.json();
-};
+}
