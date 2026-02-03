@@ -13,7 +13,7 @@ COPY . ./
 RUN dotnet publish -c Release -o /app/publish
 
 # Etapa 2: Runtime
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 
 # Copiar desde la etapa de build
