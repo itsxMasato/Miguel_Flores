@@ -1,26 +1,17 @@
-# Etapa 1: Build
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY backend-api/backend-api.csproj backend-api/
+RUN dotnet restore backend-api/backend-api.csproj
+
+COPY . .
+RUN dotnet publish backend-api/backend-api.csproj -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
-# Copiar archivos de proyecto
-COPY *.csproj ./
-RUN dotnet restore
-
-# Copiar todo el proyecto
-COPY . ./
-
-# Publicar en Release
-RUN dotnet publish -c Release -o /app/publish
-
-# Etapa 2: Runtime
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
-WORKDIR /app
-
-# Copiar desde la etapa de build
 COPY --from=build /app/publish .
 
-# Exponer puerto
-EXPOSE 5000
+ENV ASPNETCORE_URLS=http://+:$PORT
 
-# Comando para iniciar tu app
-ENTRYPOINT ["dotnet", "prueba.dll"]
+ENTRYPOINT ["dotnet", "backend-api.dll"]
