@@ -16,16 +16,19 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     // options.KnownProxies / options.KnownNetworks pueden configurarse si necesitas seguridad adicional
 });
 
-// CORS: permitir solo tu frontend en Vercel
-var frontendOrigin = "https://miguel-flores.vercel.app";
+// CORS
+var isProduction = !app.Environment.IsDevelopment();
+var corsOrigins = isProduction
+    ? new[] { "https://miguel-flores.vercel.app" }
+    : new[] { "http://localhost:3000", "http://localhost:5173" };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontendOnly", policy =>
     {
-        policy.WithOrigins(frontendOrigin)
+        policy.WithOrigins(corsOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod();
-              // .AllowCredentials(); // habilitar solo si necesitas cookies/autenticación basada en credenciales
     });
 });
 
