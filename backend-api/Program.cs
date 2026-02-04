@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -8,35 +9,48 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddCors(options =>
+// Configurar Forwarded Headers (útil en plataformas que usan proxy / TLS termination)
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    options.AddPolicy("AllowAll",
-        policy => policy
-            .AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod());
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    // options.KnownProxies / options.KnownNetworks pueden configurarse si necesitas seguridad adicional
 });
 
-// Opcional: forzar URL para pruebas locales
-// builder.WebHost.UseUrls("http://localhost:5090");
+// CORS: permitir solo tu frontend en Vercel
+var frontendOrigin = "https://miguel-flores.vercel.app";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontendOnly", policy =>
+    {
+        policy.WithOrigins(frontendOrigin)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+              // .AllowCredentials(); // habilitar solo si necesitas cookies/autenticación basada en credenciales
+    });
+});
+
+// Escuchar en el PORT que asigna la plataforma (Render)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5090";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
 
-// Middleware
-app.UseCors("AllowAll");
-app.UseRouting();
-app.MapGet("/weatherforecast", () =>
+// Aplicar forwarded headers antes de leer scheme/origin
+app.UseForwardedHeaders();
+
+// Middleware opcional de logging para depuración (puedes quitar en producción)
+app.Use(async (context, next) =>
 {
-    var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new {
-            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        })
-        .ToArray();
-    return Results.Ok(forecast);
+    Console.WriteLine($"[{DateTime.UtcNow:O}] {context.Connection.RemoteIpAddress} {context.Request.Method} {context.Request.Path}");
+    await next();
 });
 
+app.UseRouting();
+
+// Aplicar CORS
+app.UseCors("AllowFrontendOnly");
+
+// Mapear controllers
 app.MapControllers();
+
 app.Run();
