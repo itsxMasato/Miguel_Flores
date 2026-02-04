@@ -17,16 +17,11 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 
 // CORS
-var isProduction = !app.Environment.IsDevelopment();
-var corsOrigins = isProduction
-    ? new[] { "https://miguel-flores.vercel.app" }
-    : new[] { "http://localhost:3000", "http://localhost:5173" };
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontendOnly", policy =>
     {
-        policy.WithOrigins(corsOrigins)
+        policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "https://miguel-flores.vercel.app")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
