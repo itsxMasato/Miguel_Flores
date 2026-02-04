@@ -1,0 +1,7 @@
+C:\Users\itsmi\Desktop\Universidad\Desarrollo de portales web II\REACT\prueba\backend-api\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Users\itsmi\Desktop\Universidad\Desarrollo de portales web II\REACT\prueba\backend-api\obj\Debug\net8.0\backend-api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\itsmi\Desktop\Universidad\Desarrollo de portales web II\REACT\prueba\backend-api\obj\Debug\net8.0\backend-api.AssemblyInfoInputs.cache
+C:\Users\itsmi\Desktop\Universidad\Desarrollo de portales web II\REACT\prueba\backend-api\obj\Debug\net8.0\backend-api.AssemblyInfo.cs
+C:\Users\itsmi\Desktop\Universidad\Desarrollo de portales web II\REACT\prueba\backend-api\obj\Debug\net8.0\backend-api.csproj.CoreCompileInputs.cache
+C:\Users\itsmi\Desktop\Universidad\Desarrollo de portales web II\REACT\prueba\backend-api\obj\Debug\net8.0\backend-api.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\itsmi\Desktop\Universidad\Desarrollo de portales web II\REACT\prueba\backend-api\obj\Debug\net8.0\backend-api.sourcelink.json

@@ -1,9 +1,19 @@
 const BASE_URL = "http://localhost:5090/api/servicios";
 
+async function parseResponse(res) {
+  if (res.status === 204) return null; // no hay cuerpo
+  const text = await res.text();
+  try {
+    return text ? JSON.parse(text) : null;
+  } catch {
+    return text;
+  }
+}
+
 export async function getServicios() {
   const res = await fetch(BASE_URL);
-  if (!res.ok) throw new Error("Error al cargar servicios");
-  return res.json();
+  if (!res.ok) throw new Error("Error al cargar servicios: " + res.status);
+  return parseResponse(res);
 }
 
 export async function crearServicio(payload) {
@@ -18,7 +28,7 @@ export async function crearServicio(payload) {
     throw new Error(msg || "Error creando servicio");
   }
 
-  return res.json();
+  return parseResponse(res);
 }
 
 export async function actualizarServicio(id, payload) {
@@ -33,5 +43,5 @@ export async function actualizarServicio(id, payload) {
     throw new Error(msg || "Error actualizando servicio");
   }
 
-  return res.json();
+  return parseResponse(res);
 }

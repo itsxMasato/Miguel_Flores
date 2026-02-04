@@ -1,6 +1,10 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configuración de Servicios
+// Servicios
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
@@ -13,16 +17,17 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod());
 });
 
+// Opcional: forzar URL para pruebas locales
+// builder.WebHost.UseUrls("http://localhost:5090");
+
 var app = builder.Build();
 
-// 2. Configuración del Middleware
+// Middleware
 app.UseCors("AllowAll");
-
-// 3. LA RUTA CON DATOS (Esto es lo que te faltaba para que no salga [])
-var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-
+app.UseRouting();
 app.MapGet("/weatherforecast", () =>
 {
+    var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
     var forecast = Enumerable.Range(1, 5).Select(index =>
         new {
             Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
@@ -30,9 +35,8 @@ app.MapGet("/weatherforecast", () =>
             Summary = summaries[Random.Shared.Next(summaries.Length)]
         })
         .ToArray();
-    return forecast;
+    return Results.Ok(forecast);
 });
 
-app.MapControllers(); 
-
+app.MapControllers();
 app.Run();
