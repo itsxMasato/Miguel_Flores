@@ -4,8 +4,8 @@ using System.Text.Json;
 public class ServicioDto
 {
     public int Id { get; set; }
-    public string Nombre { get; set; }
-    public string Descripcion { get; set; }
+    public string? Nombre { get; set; }
+    public string? Descripcion { get; set; }
 }
 
 [ApiController]
@@ -14,8 +14,8 @@ public class ServiciosController : ControllerBase
 {
     private static readonly List<ServicioDto> _data = new()
     {
-        new { Id = 1, Nombre = "Servicio A", Descripcion = "Descripción A" },
-        new { Id = 2, Nombre = "Servicio B", Descripcion = "Descripción B" }
+        new ServicioDto { Id = 1, Nombre = "Servicio A", Descripcion = "Descripción A" },
+        new ServicioDto { Id = 2, Nombre = "Servicio B", Descripcion = "Descripción B" }
     };
 
     [HttpGet]
