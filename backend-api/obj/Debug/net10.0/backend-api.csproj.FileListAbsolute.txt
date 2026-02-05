@@ -31,3 +31,4 @@ C:\Users\itsmi\Desktop\Universidad\Desarrollo de portales web II\REACT\prueba\ba
 C:\Users\itsmi\Desktop\Universidad\Desarrollo de portales web II\REACT\prueba\backend-api\obj\Debug\net10.0\backend-api.pdb
 C:\Users\itsmi\Desktop\Universidad\Desarrollo de portales web II\REACT\prueba\backend-api\obj\Debug\net10.0\backend-api.genruntimeconfig.cache
 C:\Users\itsmi\Desktop\Universidad\Desarrollo de portales web II\REACT\prueba\backend-api\obj\Debug\net10.0\ref\backend-api.dll
+C:\Users\itsmi\Desktop\Universidad\Desarrollo de portales web II\REACT\prueba\backend-api\obj\Debug\net10.0\backend-api.sourcelink.json
